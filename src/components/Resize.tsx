@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react"
 import "./style.css"
-import DragElement from "./Drag"
 
 function Resize(props: any) {
   const { children } = props

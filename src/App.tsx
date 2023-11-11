@@ -1,12 +1,5 @@
-import React, { useEffect, useRef, useState } from "react"
+import React from "react"
 import DragElement from "./components/Drag"
-import { useStore } from "./hooks/use-store"
-import Aaaaaaa from "./components/Resize"
-
-/* 
-Пока что это все в разработке, деления на компоненты и прочие нет, 
-рефакторинг потом, как будет отработан функционал
-*/
 
 function App() {
   const [isAppActive, setIsAppActive] = React.useState<number | null>(null)
@@ -36,37 +29,31 @@ function App() {
       },
     ])
   }
-  const { setState, state } = useStore("value")
-  // console.log(typeof setValue)
+
   return (
     /* Container */
     <div className="h-screen relative w-screen grid place-items-center content-center bg-cover bg-[url('https://free4kwallpapers.com/uploads/originals/2022/04/20/rubiks-cube-digital-art-wallpaper.jpg')]">
-      {/* <ResizableDiv initialWidth={200} initialHeight={150} minWidth={50} minHeight={50}></ResizableDiv> */}
-
       {windows.map((elem, idx) => {
         return (
           <DragElement key={elem.id}>
-              <section className={`h-full w-full ease-linear shadow-xl flex flex-col  rounded-lg cursor-auto `}>
-                {/* Header bar */}
-                <div className={`bg-slate-800 w-full h-12 rounded-t-lg  flex justify-start items-center space-x-1.5 px-4   z-10`}>
-                  <button
-                    onClick={() => onCloseWindow(elem.id)}
-                    className="w-3 h-3 border-2  border-red-400 rounded-full hover:bg-red-400 bg-transparent "
-                  ></button>
-                  <button className="w-3 h-3 border-2  border-yellow-400 rounded-full hover:bg-yellow-400 bg-transparent"></button>
-                  <button className="w-3 h-3 border-2  border-green-400 rounded-full hover:bg-green-400 bg-transparent"></button>
-                </div>
-                {/* <button className="btn btn-primary" onClick={() => setState((prev: any) => prev + 1)}>
-                {state}
-              </button> */}
+            <section className={`h-full w-full ease-linear shadow-xl flex flex-col  rounded-lg cursor-auto `}>
+              {/* Header bar */}
+              <div className={`bg-slate-800 w-full h-12 rounded-t-lg  flex justify-start items-center space-x-1.5 px-4   z-10`}>
+                <button
+                  onClick={() => onCloseWindow(elem.id)}
+                  className="w-3 h-3 border-2  border-red-400 rounded-full hover:bg-red-400 bg-transparent "
+                ></button>
+                <button className="w-3 h-3 border-2  border-yellow-400 rounded-full hover:bg-yellow-400 bg-transparent"></button>
+                <button className="w-3 h-3 border-2  border-green-400 rounded-full hover:bg-green-400 bg-transparent"></button>
+              </div>
 
-                <div
-                  className=" bg-gray-700 border-t-0 w-full h-full  p-4 rounded-b-lg grid place-items-center  z-0 overflow-auto "
-                  onMouseDown={(e) => e.stopPropagation()}
-                >
-                  {elem.content()}
-                </div>
-              </section>
+              <div
+                className=" bg-gray-700 border-t-0 w-full h-full  p-4 rounded-b-lg grid place-items-center  z-0 overflow-auto "
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                {elem.content()}
+              </div>
+            </section>
           </DragElement>
         )
       })}
