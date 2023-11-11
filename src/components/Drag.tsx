@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import "./style.css"
 
 type Position = {
   x: number
@@ -11,12 +10,19 @@ type Direction = "top" | "right" | "bottom" | "left" | "topRight" | "bottomRight
 
 const DragElement: React.FC<DragElementProps> = (props) => {
   const { children } = props
+
+  const refElementDraggable = useRef<HTMLDivElement | null>(null)
+
+  const [windowWidth, setWindowWidthWidth] = useState(0)
+  const [windowHeight, setWindowHeight] = useState(0)
+
   const [isDragging, setIsDragging] = useState(false)
+  const [isResize, setIsResize] = useState(false)
+
   const [xTranslate, setXTranslate] = useState(0)
   const [yTranslate, setYTranslate] = useState(0)
   const [initialMousePosition, setInitialMousePosition] = useState<Position>({ x: 0, y: 0 })
 
-  const [isResize, setIsResize] = useState(false)
   useEffect(() => {
     console.log({ isResize })
   }, [isResize])
@@ -44,10 +50,6 @@ const DragElement: React.FC<DragElementProps> = (props) => {
     window.addEventListener("mouseup", onMouseUp)
     return () => window.removeEventListener("mouseup", onMouseUp)
   }, [])
-
-  const refElementDraggable = useRef<HTMLDivElement | null>(null)
-  const [windowWidth, setWindowWidthWidth] = useState(0)
-  const [windowHeight, setWindowHeight] = useState(0)
 
   // Отключение перетаскивания за границы окна
   useEffect(() => {
@@ -78,20 +80,28 @@ const DragElement: React.FC<DragElementProps> = (props) => {
     }
 
     !isResize && checkBounds()
-    // console.log({ windowWidth })
+
     return () => {}
   }, [windowHeight, windowWidth, xTranslate, yTranslate])
 
   // Определение ширины и высоты перетаскиваемого элемента
   useEffect(() => {
-    const getWidthAndHeightElementDraggable = () => {
+    const resizeObserverForElemDraggable = new ResizeObserver(() => {
       if (refElementDraggable.current) {
         setWindowWidthWidth(refElementDraggable.current.clientWidth)
         setWindowHeight(refElementDraggable.current.clientHeight)
       }
+    })
+
+    const getWidthAndHeightElementDraggable = () => {
+      refElementDraggable.current && resizeObserverForElemDraggable.observe(refElementDraggable.current)
     }
 
     getWidthAndHeightElementDraggable()
+
+    return () => {
+      resizeObserverForElemDraggable.disconnect()
+    }
   }, [refElementDraggable])
 
   /* RESIZE */
@@ -107,8 +117,8 @@ const DragElement: React.FC<DragElementProps> = (props) => {
 
     let resizeableEle = refElementDraggable.current
     const styles = window.getComputedStyle(resizeableEle)
-    let width = parseInt(styles.width, 10)
-    let height = parseInt(styles.height, 10)
+    let widthResizeableEle = parseInt(styles.width, 10)
+    let heightResizeableEle = parseInt(styles.height, 10)
     let x = 0
     let y = 0
 
@@ -116,9 +126,9 @@ const DragElement: React.FC<DragElementProps> = (props) => {
     const onMouseMoveRightResize = (event: MouseEvent) => {
       const dx = event.clientX - x
       x = event.clientX
-      width = width + dx
-      resizeableEle.style.width = `${width}px`
-      setWindowWidthWidth(width)
+      widthResizeableEle = widthResizeableEle + dx
+      resizeableEle.style.width = `${widthResizeableEle}px`
+      setWindowWidthWidth(widthResizeableEle)
     }
 
     const onMouseUpRightResize = (event: MouseEvent) => {
@@ -128,8 +138,6 @@ const DragElement: React.FC<DragElementProps> = (props) => {
 
     const onMouseDownRightResize = (event: MouseEvent) => {
       x = event.clientX
-      resizeableEle.style.left = styles.left
-      resizeableEle.style.right = null as any
 
       setIsResize(true)
 
@@ -140,10 +148,11 @@ const DragElement: React.FC<DragElementProps> = (props) => {
     // Top resize
     const onMouseMoveTopResize = (event: MouseEvent) => {
       const dy = event.clientY - y
-      height = height - dy
+      heightResizeableEle = heightResizeableEle - dy
       y = event.clientY
-      resizeableEle.style.height = `${height}px`
-      setWindowHeight(height)
+      resizeableEle.style.height = `${heightResizeableEle}px`
+      setWindowHeight(heightResizeableEle)
+      setYTranslate(y)
     }
 
     const onMouseUpTopResize = (event: MouseEvent) => {
@@ -156,9 +165,7 @@ const DragElement: React.FC<DragElementProps> = (props) => {
       setIsResize(true)
 
       y = event.clientY
-      const styles = window.getComputedStyle(resizeableEle)
-      resizeableEle.style.bottom = styles.bottom
-      resizeableEle.style.top = null as any
+
       document.addEventListener("mousemove", onMouseMoveTopResize)
       document.addEventListener("mouseup", onMouseUpTopResize)
     }
@@ -166,10 +173,10 @@ const DragElement: React.FC<DragElementProps> = (props) => {
     // Bottom resize
     const onMouseMoveBottomResize = (event: MouseEvent) => {
       const dy = event.clientY - y
-      height = height + dy
+      heightResizeableEle = heightResizeableEle + dy
       y = event.clientY
-      resizeableEle.style.height = `${height}px`
-      setWindowHeight(height)
+      resizeableEle.style.height = `${heightResizeableEle}px`
+      setWindowHeight(heightResizeableEle)
     }
 
     const onMouseUpBottomResize = (event: MouseEvent) => {
@@ -182,9 +189,7 @@ const DragElement: React.FC<DragElementProps> = (props) => {
       setIsResize(true)
 
       y = event.clientY
-      const styles = window.getComputedStyle(resizeableEle)
-      resizeableEle.style.top = styles.top
-      resizeableEle.style.bottom = null as any
+
       document.addEventListener("mousemove", onMouseMoveBottomResize)
       document.addEventListener("mouseup", onMouseUpBottomResize)
     }
@@ -193,10 +198,10 @@ const DragElement: React.FC<DragElementProps> = (props) => {
     const onMouseMoveLeftResize = (event: MouseEvent) => {
       const dx = event.clientX - x
       x = event.clientX
-      width = width - dx
-      resizeableEle.style.width = `${width}px`
+      widthResizeableEle = widthResizeableEle - dx
+      resizeableEle.style.width = `${widthResizeableEle}px`
 
-      setWindowWidthWidth(width)
+      setWindowWidthWidth(widthResizeableEle)
 
       setXTranslate(x)
     }
@@ -210,8 +215,6 @@ const DragElement: React.FC<DragElementProps> = (props) => {
       setIsResize(true)
 
       x = event.clientX
-
-      setXTranslate(x)
 
       document.addEventListener("mousemove", onMouseMoveLeftResize)
       document.addEventListener("mouseup", onMouseUpLeftResize)
@@ -238,15 +241,23 @@ const DragElement: React.FC<DragElementProps> = (props) => {
   return (
     <div
       ref={refElementDraggable}
-      style={{ transform: `translate(${xTranslate}px,${yTranslate}px)`, position: "fixed", left: 0, top: 0, zIndex: 100 }}
+      style={{
+        transform: `translate(${xTranslate}px,${yTranslate}px)`,
+        position: "fixed",
+        left: 0,
+        top: 0,
+        zIndex: 100,
+        userSelect: "none",
+      }}
       onMouseDown={onMouseDown}
+      draggable={false}
       {...props}
     >
       {children}
-      <div ref={refLeft} className="resizer resizer-l" />
-      <div ref={refTop} className="resizer resizer-t" />
-      <div ref={refRight} className="resizer resizer-r" />
-      <div ref={refBottom} className="resizer resizer-b" />
+      <div ref={refLeft} className="absolute bg-blue-800 cursor-col-resize h-full left-0 top-0 w-1" />
+      <div ref={refTop} className="absolute bg-blue-800 cursor-row-resize w-full top-0 h-1  " />
+      <div ref={refRight} className="absolute bg-blue-800 cursor-col-resize h-full right-0 top-0 w-1" />
+      <div ref={refBottom} className="absolute bg-blue-800 cursor-row-resize w-full bottom-0 h-1 " />
     </div>
   )
 }

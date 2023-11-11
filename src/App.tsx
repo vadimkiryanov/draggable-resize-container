@@ -38,7 +38,7 @@ function App() {
           <DragElement key={elem.id}>
             <section className={`h-full w-full ease-linear shadow-xl flex flex-col  rounded-lg cursor-auto `}>
               {/* Header bar */}
-              <div className={`bg-slate-800 w-full h-12 rounded-t-lg  flex justify-start items-center space-x-1.5 px-4   z-10`}>
+              <div className={`bg-slate-800 w-full min-h-12 rounded-t-lg  flex justify-start items-center space-x-1.5 px-4`}>
                 <button
                   onClick={() => onCloseWindow(elem.id)}
                   className="w-3 h-3 border-2  border-red-400 rounded-full hover:bg-red-400 bg-transparent "
