@@ -38,13 +38,13 @@ function App() {
           <DragElement key={elem.id}>
             <section className={`h-full w-full ease-linear shadow-xl flex flex-col  rounded-lg cursor-auto `}>
               {/* Header bar */}
-              <div className={`bg-slate-800 w-full min-h-12 rounded-t-lg  flex justify-start items-center space-x-1.5 px-4`}>
+              <div className={`bg-slate-800 w-full min-h-12 rounded-t-lg  flex justify-end items-center space-x-1.5 px-4`}>
+                <button className="w-3 h-3 border-2  border-green-400 rounded-full hover:bg-green-400 bg-transparent"></button>
+                <button className="w-3 h-3 border-2  border-yellow-400 rounded-full hover:bg-yellow-400 bg-transparent"></button>
                 <button
                   onClick={() => onCloseWindow(elem.id)}
                   className="w-3 h-3 border-2  border-red-400 rounded-full hover:bg-red-400 bg-transparent "
                 ></button>
-                <button className="w-3 h-3 border-2  border-yellow-400 rounded-full hover:bg-yellow-400 bg-transparent"></button>
-                <button className="w-3 h-3 border-2  border-green-400 rounded-full hover:bg-green-400 bg-transparent"></button>
               </div>
 
               <div
