@@ -38,13 +38,55 @@ function App() {
           <DragElement key={elem.id}>
             <section className={`h-full w-full ease-linear shadow-xl flex flex-col  rounded-lg cursor-auto `}>
               {/* Header bar */}
-              <div className={`bg-slate-800 w-full min-h-12 rounded-t-lg  flex justify-end items-center space-x-1.5 px-4`}>
-                <button className="w-3 h-3 border-2  border-green-400 rounded-full hover:bg-green-400 bg-transparent"></button>
-                <button className="w-3 h-3 border-2  border-yellow-400 rounded-full hover:bg-yellow-400 bg-transparent"></button>
-                <button
+              <div className={`bg-[#1a1f35] w-full min-h-[28px] rounded-t-lg  flex justify-end items-center space-x-1.5 overflow-hidden`}>
+                {/* <button className="w-3 h-3 border-2  border-green-400 rounded-full hover:bg-green-400 bg-transparent"></button> */}
+                {/* <button className="w-3 h-3 border-2  border-yellow-400 rounded-full hover:bg-yellow-400 bg-transparent"></button> */}
+                {/* <button
                   onClick={() => onCloseWindow(elem.id)}
                   className="w-3 h-3 border-2  border-red-400 rounded-full hover:bg-red-400 bg-transparent "
-                ></button>
+                ></button> */}
+                <div className="flex h-full">
+                  <span className="hover:bg-[#8883] transition-colors w-12">
+                    <svg
+                      className="h-full w-4 mx-auto opacity-60"
+                      stroke="currentColor"
+                      fill="currentColor"
+                      stroke-width="0"
+                      viewBox="0 0 16 16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M14 8v1H3V8h11z"></path>
+                    </svg>
+                  </span>
+                  <span className="hover:bg-[#8883] transition-colors w-12">
+                    <svg
+                      className="h-full w-4 mx-auto opacity-60"
+                      stroke="currentColor"
+                      fill="currentColor"
+                      stroke-width="0"
+                      viewBox="0 0 16 16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M3 3v10h10V3H3zm9 9H4V4h8v8z"></path>
+                    </svg>
+                  </span>
+                  <span className="hover:bg-[#f00c] transition-colors w-12" onClick={() => onCloseWindow(elem.id)}>
+                    <svg
+                      className="h-full w-4 mx-auto opacity-60"
+                      stroke="currentColor"
+                      fill="currentColor"
+                      stroke-width="0"
+                      viewBox="0 0 16 16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M7.116 8l-4.558 4.558.884.884L8 8.884l4.558 4.558.884-.884L8.884 8l4.558-4.558-.884-.884L8 7.116 3.442 2.558l-.884.884L7.116 8z"
+                      ></path>
+                    </svg>
+                  </span>
+                </div>
               </div>
 
               <div
