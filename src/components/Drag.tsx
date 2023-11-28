@@ -23,8 +23,8 @@ const DragElement: React.FC<DragElementProps> = (props) => {
   const [isDragging, setIsDragging] = useState(false)
   const [isResize, setIsResize] = useState(false)
 
-  const [xTranslate, setXTranslate] = useState(0)
-  const [yTranslate, setYTranslate] = useState(0)
+  const [xTranslate, setXTranslate] = useState(200)
+  const [yTranslate, setYTranslate] = useState(200)
   const [initialMousePosition, setInitialMousePosition] = useState<Position>({ x: 0, y: 0 })
 
   const onMouseDown = (e: React.MouseEvent) => {
@@ -112,6 +112,8 @@ const DragElement: React.FC<DragElementProps> = (props) => {
 
   const refTopLeft = useRef<HTMLDivElement>(null)
   const refBottomLeft = useRef<HTMLDivElement>(null)
+  const refTopRight = useRef<HTMLDivElement>(null)
+  const refBottomRight = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (
@@ -121,7 +123,9 @@ const DragElement: React.FC<DragElementProps> = (props) => {
       !refRight.current ||
       !refBottom.current ||
       !refTopLeft.current ||
-      !refBottomLeft.current
+      !refBottomLeft.current ||
+      !refTopRight.current ||
+      !refBottomRight.current
     ) {
       return
     }
@@ -174,7 +178,47 @@ const DragElement: React.FC<DragElementProps> = (props) => {
       document.addEventListener("mouseup", onMouseUpTopLeftResize)
     }
 
-    // Дай код функции для onMouseMoveTopRightResize
+    // Top-Right resize
+    const onMouseMoveTopRightResize = (event: MouseEvent) => {
+      const dy = event.clientY - y
+      const dx = event.clientX - x
+
+      heightResizeableEle = heightResizeableEle - dy
+      widthResizeableEle = widthResizeableEle + dx
+      y = event.clientY
+      x = event.clientX
+      resizeableEle.style.height = `${heightResizeableEle}px`
+      resizeableEle.style.width = `${widthResizeableEle}px`
+
+      setWindowHeight(heightResizeableEle)
+      setWindowWidthWidth(widthResizeableEle)
+
+      initY = initY + dy
+      initX = initX + dx
+
+      resizeableEle.style.transform = `translate(${xTranslate}px, ${initY}px)`
+
+      setYTranslate(initY)
+    }
+
+    const onMouseUpTopRightResize = (event: MouseEvent) => {
+      setIsResize(false)
+      document.removeEventListener("mousemove", onMouseMoveTopRightResize)
+    }
+
+    const onMouseDownTopRightResize = (event: MouseEvent) => {
+      setIsResize(true)
+      x = event.clientX
+      y = event.clientY
+
+      initX = resizeableEle.getClientRects()[0]!.x
+      initY = resizeableEle.getClientRects()[0]!.y
+
+      document.addEventListener("mousemove", onMouseMoveTopRightResize)
+      document.addEventListener("mouseup", onMouseUpTopRightResize)
+    }
+
+    // Bottom-Left resize
     const onMouseMoveBottomLeftResize = (event: MouseEvent) => {
       const dx = event.clientX - x
       const dy = event.clientY - y
@@ -210,6 +254,45 @@ const DragElement: React.FC<DragElementProps> = (props) => {
 
       document.addEventListener("mousemove", onMouseMoveBottomLeftResize)
       document.addEventListener("mouseup", onMouseUpBottomLeftResize)
+    }
+
+    // Bottom-Right resize
+    const onMouseMoveBottomRightResize = (event: MouseEvent) => {
+      const dx = event.clientX - x
+      const dy = event.clientY - y
+      x = event.clientX
+      y = event.clientY
+      widthResizeableEle = widthResizeableEle + dx
+      heightResizeableEle = heightResizeableEle + dy
+      resizeableEle.style.width = `${widthResizeableEle}px`
+      resizeableEle.style.height = `${heightResizeableEle}px`
+      setWindowWidthWidth(widthResizeableEle)
+      setWindowHeight(heightResizeableEle)
+
+      initX = initX + dx
+      initY = initY + dy
+
+      // resizeableEle.style.transform = `translate(${xTranslate}px, ${yTranslate}px)`
+
+      // setXTranslate(initX)
+      // setYTranslate(initY)
+    }
+
+    const onMouseUpBottomRightResize = (event: MouseEvent) => {
+      setIsResize(false)
+      document.removeEventListener("mousemove", onMouseMoveBottomRightResize)
+    }
+
+    const onMouseDownBottomRightResize = (event: MouseEvent) => {
+      setIsResize(true)
+      x = event.clientX
+      y = event.clientY
+
+      initX = resizeableEle.getClientRects()[0]!.x
+      initY = resizeableEle.getClientRects()[0]!.y
+
+      document.addEventListener("mousemove", onMouseMoveBottomRightResize)
+      document.addEventListener("mouseup", onMouseUpBottomRightResize)
     }
 
     // Right resize
@@ -337,6 +420,12 @@ const DragElement: React.FC<DragElementProps> = (props) => {
     const resizerBottomLeft = refBottomLeft.current
     resizerBottomLeft.addEventListener("mousedown", onMouseDownBottomLeftResize)
 
+    const resizerTopRight = refTopRight.current
+    resizerTopRight.addEventListener("mousedown", onMouseDownTopRightResize)
+
+    const resizerBottomRight = refBottomRight.current
+    resizerBottomRight.addEventListener("mousedown", onMouseDownBottomRightResize)
+
     return () => {
       resizerRight.removeEventListener("mousedown", onMouseDownRightResize)
       resizerTop.removeEventListener("mousedown", onMouseDownTopResize)
@@ -345,6 +434,8 @@ const DragElement: React.FC<DragElementProps> = (props) => {
 
       resizerTopLeft.removeEventListener("mousedown", onMouseDownTopLeftResize)
       resizerBottomLeft.removeEventListener("mousedown", onMouseDownBottomLeftResize)
+      resizerTopRight.removeEventListener("mousedown", onMouseDownTopRightResize)
+      resizerBottomRight.removeEventListener("mousedown", onMouseDownBottomRightResize)
     }
   }, [refElementDraggable, xTranslate, yTranslate])
 
@@ -360,9 +451,12 @@ const DragElement: React.FC<DragElementProps> = (props) => {
       {children}
       <div ref={refBottomLeft} className="absolute  cursor-nesw-resize w-4 h-4 -bottom-1 -left-1 z-10" />
       <div ref={refTopLeft} className="absolute  cursor-nwse-resize w-4 h-4 -top-1 -left-1 z-10" />
-      <div ref={refLeft} className="absolute cursor-w-resize h-full -left-1 top-0 w-2" />
+      <div ref={refTopRight} className="absolute  cursor-nesw-resize w-4 h-4 -top-1 -right-1 z-10" />
+      <div ref={refBottomRight} className="absolute  cursor-nwse-resize w-4 h-4 -bottom-1 -right-1 z-10" />
+      {/* <div ref={refTopLeft} className="absolute bg-blue-600 cursor-nwse-resize w-4 h-4 -top-1 -left-1 z-10" /> */}
+      <div ref={refLeft} className="absolute  cursor-w-resize h-full -left-1 top-0 w-2" />
       <div ref={refTop} className="absolute  cursor-n-resize w-full -top-1 h-2" />
-      <div ref={refRight} className="absolute cursor-w-resize  h-full -right-1 top-0 w-2" />
+      <div ref={refRight} className="absolute  cursor-w-resize  h-full -right-1 top-0 w-2" />
       <div ref={refBottom} className="absolute  cursor-n-resize w-full -bottom-1 h-2 " />
     </div>
   )
