@@ -442,18 +442,20 @@ const DragElement: React.FC<DragElementProps> = (props) => {
   return (
     <div
       ref={refElementDraggable}
-      className={`fixed left-0 top-0 z-50 select-none`}
+      className={`fixed left-0 top-0 z-40 select-none`}
       style={{ transform: `translate(${xTranslate}px,${yTranslate}px)`, transition: "none 0s ease 0s" }}
       onMouseDown={onMouseDown}
       draggable={false}
       {...props}
     >
       {children}
+      {/* 👇 Подложка */}
+      {isResize && <div className="w-full h-full absolute top-0 left-0" />}
       <div ref={refBottomLeft} className="absolute  cursor-nesw-resize w-4 h-4 -bottom-1 -left-1 z-10" />
       <div ref={refTopLeft} className="absolute  cursor-nwse-resize w-4 h-4 -top-1 -left-1 z-10" />
       <div ref={refTopRight} className="absolute  cursor-nesw-resize w-4 h-4 -top-1 -right-1 z-10" />
       <div ref={refBottomRight} className="absolute  cursor-nwse-resize w-4 h-4 -bottom-1 -right-1 z-10" />
-      {/* <div ref={refTopLeft} className="absolute bg-blue-600 cursor-nwse-resize w-4 h-4 -top-1 -left-1 z-10" /> */}
+      
       <div ref={refLeft} className="absolute  cursor-w-resize h-full -left-1 top-0 w-2" />
       <div ref={refTop} className="absolute  cursor-n-resize w-full -top-1 h-2" />
       <div ref={refRight} className="absolute  cursor-w-resize  h-full -right-1 top-0 w-2" />
